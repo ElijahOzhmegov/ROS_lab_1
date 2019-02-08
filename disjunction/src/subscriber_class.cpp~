@@ -1,0 +1,44 @@
+#include "ros/ros.h"
+#include "std_msgs/Bool.h"
+#include "stdio.h"
+
+
+class SubscribeAndPublish
+{
+public:
+  SubscribeAndPublish()
+  {
+    //Topic you want to publish
+    pub_ = n_.advertise<std_msgs::Bool>("bool_out", 1);
+
+    //Topic you want to subscribe
+    sub_ = n_.subscribe("bool_in", 1, &SubscribeAndPublish::callback, this);
+  }
+
+  void callback(const std_msgs::Bool& input)
+  {
+    std_msgs::Bool output;
+    
+    output.data = input.data;
+    
+    pub_.publish(output);
+  }
+
+private:
+  ros::NodeHandle n_; 
+  ros::Publisher  pub_;
+  ros::Subscriber sub_;
+
+};
+
+
+int main(int argc, char **argv)
+{
+    ros::init(argc, argv, "subscriber");
+    
+    SubscribeAndPublish Mr_nipple;
+    
+    ros::spin();
+
+    return 0;
+}
